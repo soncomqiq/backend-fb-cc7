@@ -52,8 +52,25 @@ const getAllMyPost = async (req, res) => {
   res.status(200).send(allPost);
 };
 
-const getMyFeed = (req, res) => {
-  // DONT DO 
+const getMyFeed = async (req, res) => {
+  const friendByIds = (await db.Friend.findAll({
+    where: { status: "FRIEND", request_to_id: req.user.id }
+  })).map(e => e.request_by_id);
+
+  const friendToIds = (await db.Friend.findAll({
+    where: { status: "FRIEND", request_by_id: req.user.id }
+  })).map(e => e.request_to_id);
+
+  const allFriendIds = [...friendByIds, ...friendToIds, req.user.id];
+
+  const allFeeds = await db.Post.findAll({
+    where: { user_id: allFriendIds },
+    order: [
+      ['id', 'ASC'],
+    ],
+  });
+
+  res.send(allFeeds);
 };
 
 module.exports = {
