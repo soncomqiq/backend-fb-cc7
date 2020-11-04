@@ -27,8 +27,8 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Comment, { foreignKey: "user_id" });
     // User.belongsToMany(models.User, { foreignKey: "request_to_id", through: models.Friend, as: "requesterTo" });
     // User.belongsToMany(models.User, { foreignKey: "request_by_id", through: models.Friend, as: "requesterBy" });
-    User.hasMany(models.User, { foreignKey: "request_to_id" });
-    User.hasMany(models.User, { foreignKey: "request_by_id" });
+    User.hasMany(models.Friend, { foreignKey: "request_to_id" });
+    User.hasMany(models.Friend, { foreignKey: "request_by_id" });
   };
 
   return User;

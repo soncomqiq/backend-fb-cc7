@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Friend.associate = models => {
     Friend.belongsTo(models.User, { foreignKey: "request_to_id" });
-    Friend.belongsTo(models.User, { foreignKey: "request_by_id " });
+    Friend.belongsTo(models.User, { foreignKey: "request_by_id" });
   };
 
   return Friend;
