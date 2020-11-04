@@ -5,7 +5,7 @@ const getAllFriends = async (req, res) => {
   const friendByIds = (await db.Friend.findAll({
     where: { status: "FRIEND", request_to_id: req.user.id }
   })).map(e => e.request_by_id);
-
+ 
   const friendToIds = (await db.Friend.findAll({
     where: { status: "FRIEND", request_by_id: req.user.id }
   })).map(e => e.request_to_id);

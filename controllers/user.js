@@ -1,6 +1,7 @@
 const db = require("../models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { Op } = require("sequelize");
 
 const register = async (req, res) => {
   const { username, password, name, profileUrl } = req.body;
@@ -40,7 +41,36 @@ const login = async (req, res) => {
   }
 };
 
+const getUserById = async (req, res) => {
+  const userId = req.params.userId;
+  const targetUser = await db.User.findOne({
+    where: { id: userId },
+    attributes: ["id", "name", "profile_url"]
+  });
+  const friendRala = await db.Friend.findOne({
+    where: {
+      [Op.or]: [
+        { request_to_id: userId, request_by_id: req.user.id },
+        { request_to_id: req.user.id, request_by_id: userId }
+      ]
+    }
+  });
+
+  if (!friendRala && !targetUser) {
+    res.status(404).send({ message: "Notfound" });
+  } else if (!friendRala && targetUser) {
+    res.status(200).send({ targetUser, message: "เพิ่มเพื่อน" });
+  } else if (friendRala && friendRala.status === "FRIEND") {
+    res.status(200).send({ targetUser, message: "เพื่อน" });
+  } else if (friendRala && friendRala.status === "PENDING" && friendRala.request_by_id === Number(userId)) {
+    res.status(200).send({ targetUser, message: "ตอบรับคำขอเป็นเพื่อน" });
+  } else {
+    res.status(200).send({ targetUser, message: "ส่งคำขอเป็นเพื่อนแล้ว" });
+  }
+};
+
 module.exports = {
   register,
-  login
+  login,
+  getUserById,
 };
