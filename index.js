@@ -8,9 +8,11 @@ const commentRoutes = require('./routes/comment');
 const friendRoutes = require("./routes/friend");
 const uploadRoutes = require("./routes/upload");
 const fileUpload = require('express-fileupload');
+const cors = require("cors");
 
 require("./config/passport");
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(fileUpload());
