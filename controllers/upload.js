@@ -4,7 +4,7 @@ const uploadImage = (req, res) => {
   }
   const image = req.files.img;
   const fileExtension = image.name.split(".").slice(-1)[0];
-  const fileName = `${new Date().getTime()}${req.user.id}.${fileExtension}`;
+  const fileName = `${new Date().getTime()}.${fileExtension}`;
   image.mv(`upload-files/${fileName}`, (err) => {
     if(err){
       return res.status(500).send(err);
