@@ -6,15 +6,20 @@ const userRoutes = require("./routes/user");
 const postRoutes = require("./routes/post");
 const commentRoutes = require('./routes/comment');
 const friendRoutes = require("./routes/friend");
+const uploadRoutes = require("./routes/upload");
+const fileUpload = require('express-fileupload');
 
 require("./config/passport");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(fileUpload());
+app.use(express.static("upload-files"));
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 app.use("/comments", commentRoutes);
 app.use("/friends", friendRoutes);
+app.use("/uploads", uploadRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running at port ${process.env.PORT}`);
