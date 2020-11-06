@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const db = require("../models");
 
 // Get All Friends
@@ -5,7 +6,7 @@ const getAllFriends = async (req, res) => {
   const friendByIds = (await db.Friend.findAll({
     where: { status: "FRIEND", request_to_id: req.user.id }
   })).map(e => e.request_by_id);
- 
+
   const friendToIds = (await db.Friend.findAll({
     where: { status: "FRIEND", request_by_id: req.user.id }
   })).map(e => e.request_to_id);
@@ -72,7 +73,21 @@ const denyRequest = async (req, res) => {
 const deleteFriend = async (req, res) => {
   const userId = req.params.userId;
   await db.Friend.destroy({
-    where: { status: "FRIEND", request_by_id: userId, request_to_id: req.user.id }
+    where: {
+      [Op.or]: [
+        { status: "FRIEND", request_by_id: userId, request_to_id: req.user.id },
+        { status: "FRIEND", request_by_id: req.user.id, request_to_id: userId },
+      ]
+    }
+  });
+
+  res.send();
+};
+
+const cancelRequest = async (req, res) => {
+  const userId = req.params.userId;
+  await db.Friend.destroy({
+    where: { status: "PENDING", request_by_id: req.user.id, request_to_id: userId }
   });
 
   res.send();
@@ -85,4 +100,5 @@ module.exports = {
   acceptRequest,
   denyRequest,
   deleteFriend,
+  cancelRequest,
 };
