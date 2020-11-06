@@ -65,6 +65,15 @@ const getMyFeed = async (req, res) => {
 
   const allFeeds = await db.Post.findAll({
     where: { user_id: allFriendIds },
+    include: [
+      {
+        model: db.Comment,
+        attributes: ["id", "comment"],
+        include: [{ model: db.User, attributes: ["id", "name", "profile_url"] }]
+      },
+      { model: db.User, attributes: ["id", "name", "profile_url"] }
+    ],
+    attributes: ["id", "caption", "picture_url", "createdAt", "updatedAt"],
     order: [
       ['id', 'ASC'],
     ],
